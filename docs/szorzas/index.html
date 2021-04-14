@@ -85,34 +85,46 @@
 
         let feladat;
 
-        let csillagok = 0;
-
-        function csillag() {
-            $("#csillagok").html("");
-            for (let i = 0; i < csillagok; i++) {
-                $("#csillagok").append("<img class='csillag' src='resources/img/csillag.jpeg'>");
-            }
-        }
+        let start;
 
         function kerdez() {
             $("#urlap").show();
             feladat = feladatok[Math.floor(Math.random() * feladatok.length)];
             $("#kerdes").html(feladat.feladat.replace("_", "<input id='valasz' />"));
             $("#valasz").focus();
+            start = Date.now();
         }
 
         const yay = new Audio('resources/sound/yay.mp3');
         const bad = new Audio('resources/sound/droplet-bad.mp3');
         const rossz = new Audio('resources/sound/fail.mp3');
+        const gyors = new Audio('resources/sound/swoosh.mp3');
+        const wow = new Audio('resources/sound/wow.mp3');
 
         function ellenoriz() {
             $("#urlap").hide();
             if ($("#valasz").val() == feladat.megoldas) {
-                $("#eredmeny")
-                    .html("<img src='resources/gif/minion.gif'>")
-                    .show().delay(1200).fadeOut(500, kerdez);
-                yay.play();
-                csillagok++;
+                let ido = Date.now() - start;
+
+                if (ido < 4000) {
+                    $("#eredmeny")
+                        .html("<img src='resources/gif/villam.gif'>")
+                        .show().delay(500).fadeOut(100, kerdez);
+                    wow.play();
+                    $("#csillagok").append("<img class='csillag' src='resources/img/villam.png'>");
+                } else if (ido < 10000) {
+                    $("#eredmeny")
+                        .html("<img src='resources/gif/gyalogkakukk.gif'>")
+                        .show().delay(1200).fadeOut(500, kerdez);
+                    gyors.play();
+                    $("#csillagok").append("<img class='csillag' src='resources/img/aranycsillag.png'>");
+                } else {
+                    $("#eredmeny")
+                        .html("<img src='resources/gif/minion.gif'>")
+                        .show().delay(1200).fadeOut(500, kerdez);
+                    yay.play();
+                    $("#csillagok").append("<img class='csillag' src='resources/img/csillag.jpeg'>");
+                }
             } else {
                 $("#eredmeny")
                     .html(feladat.feladat.replace("_", "<span class='helyes'>"+feladat.megoldas+"</span>") +
@@ -120,7 +132,6 @@
                     .show().delay(3000).fadeOut(kerdez);
                 rossz.play();
             }
-            csillag();
         }
 
         $(document).ready(function() {
