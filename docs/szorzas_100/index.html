@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body, #valasz {
+            font-family: "Comic Sans MS";
+            color: #73648A;
+        }
+
+        #keret {
+            width: 100%;
+            height: 100vh;
+            text-align: center;
+            vertical-align: middle;
+
+        }
+
+        #kerdes {
+            vertical-align: middle;
+        }
+
+        body {
+            font-size: 100px;
+            vertical-align: middle;
+            horiz-align: center;
+        }
+
+        .helyes {
+            font-weight: bold;
+            color: coral;
+        }
+
+        select { font-family:inherit; }
+
+        #valasz, #valasz:focus {
+            width: 1.5em;
+            height: 1em;
+            font-size: 1em;
+            border-left: none;
+            border-top: none;
+            border-right: none;
+            border-bottom: 5px solid #73648A;
+            background-color: #DED8E8;
+            text-align: right;
+            outline: none;
+        }
+
+        #eredmeny img {
+            height: 600px;
+        }
+
+        .csillag {
+            height: 100px;
+        }
+
+    </style>
+    <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+    <script language="JavaScript">
+        let tipusok = {
+            "a * b = _": "c",
+            "a * _ = c": "b",
+            "_ * b = c": "a",
+            "c : a = _": "b",
+            "_ : a = b": "c",
+            "c : _ = b": "a"
+        }
+
+        let feladatok = [];
+        for (let a = 2; a <= 10; a++) {
+            for (let b = 10; b <= 1000; b+=10) {
+                let c = a * b;
+                for (let tipus in tipusok) {
+                    feladatok.push({
+                        feladat: tipus.replace("a", a).replace("b", b).replace("c", c),
+                        megoldas: tipusok[tipus].replace("a", a).replace("b", b).replace("c", c),
+                        suly: 100
+                    });
+                }
+            }
+        }
+
+        for (let a = 10; a <= 1000; a+=10) {
+            for (let b = 10; b <= 30; b+=10) {
+                let c = a * b;
+                for (let tipus in tipusok) {
+                    feladatok.push({
+                        feladat: tipus.replace("a", a).replace("b", b).replace("c", c),
+                        megoldas: tipusok[tipus].replace("a", a).replace("b", b).replace("c", c),
+                        suly: 100
+                    });
+                }
+            }
+        }
+
+        let feladat;
+
+        let start;
+
+        function kerdez() {
+            $("#urlap").show();
+            feladat = feladatok[Math.floor(Math.random() * feladatok.length)];
+            $("#kerdes").html(feladat.feladat.replace("_", "<input id='valasz' />"));
+            $("#valasz").focus();
+            start = Date.now();
+        }
+
+        const yay = new Audio('resources/sound/yay.mp3');
+        const bad = new Audio('resources/sound/droplet-bad.mp3');
+        const rossz = new Audio('resources/sound/fail.mp3');
+        const gyors = new Audio('resources/sound/swoosh.mp3');
+        const wow = new Audio('resources/sound/wow.mp3');
+
+        function ellenoriz() {
+            $("#urlap").hide();
+            if ($("#valasz").val() == feladat.megoldas) {
+                let ido = Date.now() - start;
+
+                if (ido < 4000) {
+                    $("#eredmeny")
+                        .html("<img src='resources/gif/villam.gif'>")
+                        .show().delay(500).fadeOut(100, kerdez);
+                    wow.play();
+                    $("#csillagok").append("<img class='csillag' src='resources/img/villam.png'>");
+                } else if (ido < 10000) {
+                    $("#eredmeny")
+                        .html("<img src='resources/gif/gyalogkakukk.gif'>")
+                        .show().delay(1200).fadeOut(500, kerdez);
+                    gyors.play();
+                    $("#csillagok").append("<img class='csillag' src='resources/img/aranycsillag.png'>");
+                } else {
+                    $("#eredmeny")
+                        .html("<img src='resources/gif/minion.gif'>")
+                        .show().delay(1200).fadeOut(500, kerdez);
+                    yay.play();
+                    $("#csillagok").append("<img class='csillag' src='resources/img/csillag.jpeg'>");
+                }
+            } else {
+                $("#eredmeny")
+                    .html(feladat.feladat.replace("_", "<span class='helyes'>"+feladat.megoldas+"</span>") +
+                        "<br><br><img src='resources/gif/randamacska.gif'>")
+                    .show().delay(3000).fadeOut(kerdez);
+                rossz.play();
+            }
+        }
+
+        $(document).ready(function() {
+            kerdez();
+            $(document).keypress(function(e) {
+                if ( e.which == 32 || e.which == 13 ) {
+                    event.preventDefault();
+                    ellenoriz();
+                    return false;
+                }
+                if ( e.which < 48 || e.which > 57 ) {
+                    event.preventDefault();
+                    bad.play();
+                    return false;
+                }
+            })
+        });
+
+    </script>
+    <title>Szorzótábla</title>
+</head>
+<body>
+
+<div id="keret">
+    <div id="csillagok"></div>
+    <form id="urlap" autocomplete="off">
+        <div id="kerdes"><input id='valasz' /></div>
+    </form>
+    <div id="eredmeny"></div>
+</div>
+
+</body>
+</html>
