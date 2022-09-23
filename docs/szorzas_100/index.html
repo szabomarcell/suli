@@ -34,7 +34,7 @@
         select { font-family:inherit; }
 
         #valasz, #valasz:focus {
-            width: 1.5em;
+            width: 2em;
             height: 1em;
             font-size: 1em;
             border-left: none;
@@ -86,12 +86,14 @@
         for (let a = 10; a <= 1000; a+=10) {
             for (let b = 10; b <= 30; b+=10) {
                 let c = a * b;
-                for (let tipus in tipusok) {
-                    feladatok.push({
-                        feladat: tipus.replace("a", a).replace("b", b).replace("c", c),
-                        megoldas: tipusok[tipus].replace("a", a).replace("b", b).replace("c", c),
-                        suly: 100
-                    });
+                if (c < 10000) {
+                    for (let tipus in tipusok) {
+                        feladatok.push({
+                            feladat: tipus.replace("a", a).replace("b", b).replace("c", c),
+                            megoldas: tipusok[tipus].replace("a", a).replace("b", b).replace("c", c),
+                            suly: 100
+                        });
+                    }
                 }
             }
         }
